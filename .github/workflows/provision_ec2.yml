@@ -42,9 +42,9 @@ jobs:
       run: terraform plan
 
     # Abort if the plan failed
-#     - name: Abort on Terraform failure
-#       if: steps.plan.outcome == 'failure'
-#       run: exit 1
+    - name: Check for Terraform failure
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
       
     # Apply the plan to the environment
     - name: Terraform Apply
