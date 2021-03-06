@@ -9,7 +9,7 @@ on:
 
 jobs:
   terraform:
-    name: 'Provision guac-cloud EC2 instance'
+    name: 'Provision EC2 instance'
     runs-on: ubuntu-latest
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -40,37 +40,12 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform plan
-      
-    # Adds a comment to the PR with the results of the format, init and plan steps, and the plan output (steps.plan.outputs.stdout).
-#     - name: Update Pull Request
-#       uses: actions/github-script@0.9.0
-#       if: github.event_name == 'pull_request'
-#       env:
-#         PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-#       with:
-#         github-token: ${{ secrets.GITHUB_TOKEN }}
-#         script: |
-#           const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-#           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-#           #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-#           <details><summary>Show Plan</summary>
-#           \`\`\`${process.env.PLAN}\`\`\`
-#           </details>
-#           *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-
-#           github.issues.createComment({
-#             issue_number: context.issue.number,
-#             owner: context.repo.owner,
-#             repo: context.repo.repo,
-#             body: output
-#           })
 
     # Abort if the plan failed
-    - name: Abort on Terraform failure
-      if: steps.plan.outcome == 'failure'
-      run: exit 1
+#     - name: Abort on Terraform failure
+#       if: steps.plan.outcome == 'failure'
+#       run: exit 1
       
     # Apply the plan to the environment
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve
