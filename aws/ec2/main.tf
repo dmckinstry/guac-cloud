@@ -1,3 +1,12 @@
+terraform {
+  backend "remote" {
+    organization = "guac_cloud"
+
+    workspaces {
+      name = "aws_cloud"
+    }
+  }
+}
 provider "aws" {
   profile = "default"
   region = "us-west-2"
