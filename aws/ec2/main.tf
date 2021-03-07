@@ -49,6 +49,6 @@ resource "aws_security_group" "web-sg" {
   }
 }
 
-output "web_address" {
-  value = "${aws_instance.web.public_dns}"
+output "url" {
+  value = "${aws_instance.web.public_dns}:80"
 }
