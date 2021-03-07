@@ -49,3 +49,11 @@ jobs:
     # Apply the plan to the environment
     - name: Terraform Apply
       run: terraform apply -auto-approve
+
+    # Output variables
+    - name: Persist environment configuration
+      run: echo 'foo'
+
+
+
+# ----
