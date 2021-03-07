@@ -52,7 +52,7 @@ jobs:
 
     # Output variables
     - name: Persist environment configuration
-      run: echo 'foo'
+      run: echo $web_address
 
 
 
