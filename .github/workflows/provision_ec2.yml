@@ -53,7 +53,10 @@ jobs:
         URL=`terraform output -raw url`
         echo "--> $URL <--"
         echo "Retrieved endpoint: $URL"
-
+    
+    - name: Debug
+      run: 'echo "Retrieved endpoint: $URL"'
+  
     - name: Save endpoint
       id: persist_url
       uses: noobly314/share-data@v1
@@ -61,7 +64,7 @@ jobs:
         share-id: release_url
         mode: set
         key: url
-        value: ${ URL }
+        value: "ec2-54-190-155-39.us-west-2.compute.amazonaws.com:80"
 
   verify_environment:
     name: 'Verify EC2 instance'
