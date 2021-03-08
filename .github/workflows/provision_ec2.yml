@@ -44,11 +44,12 @@ jobs:
     - name: Apply Terraform plan
       run: |
         terraform apply -auto-approve
-        #terraform output > terraform.env
-        #cat terraform.env
-        URL_ENDPOINT=$(terraform output -raw url)
-        echo "Retrieved endpoint:"
-        echo $URL_ENDPOINT
+        URL=$(terraform output -raw url)
+
+    - name: Debug
+      run: |
+        echo "Retrieved endpoint:\n"
+        echo $URL
 
     - name: Save endpoint
       id: persist_url
