@@ -13,7 +13,7 @@ defaults:
     working-directory: ./aws/ec2
 
 jobs:
-  terraform_apply:
+  provision_environment:
     name: 'Provision EC2 instance'
     runs-on: ubuntu-latest
 
@@ -60,6 +60,7 @@ jobs:
   verify_environment:
     name: 'Verify EC2 instance'
     runs-on: ubuntu-latest
+    needs: provision_environment
     
     steps:
     - name: Restore endpoint
@@ -78,6 +79,7 @@ jobs:
   destroy_environment:
     name: 'Destrory EC2 instance'
     runs-on: ubuntu-latest
+    needs: verify_environment
     
     steps:
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
@@ -87,7 +89,7 @@ jobs:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
     # Initialize a new Terraform and destroy the environment
-    - name: Initialize and Plan
+    - name: Destroy environment
       run: |
         # terraform init
         terraform destroy
