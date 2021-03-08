@@ -7,16 +7,15 @@ on:
   pull_request:
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+    working-directory: ./aws/ec2
+
 jobs:
-  terraform:
+  terraform_apply:
     name: 'Provision EC2 instance'
     runs-on: ubuntu-latest
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./aws/ec2
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -30,23 +29,72 @@ jobs:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
     # Initialize a new Terraform working directory, verify the format, and execute the plan
-    - name: Terraform Init
+    - name: Initialize and Plan
       run: |
         terraform init
         terraform fmt -check
         terraform plan
 
     # Abort if the plan failed
-    - name: Check for Terraform failure
+    - name: Abort on Terrafor failures
       if: steps.plan.outcome == 'failure'
       run: exit 1
       
     # Apply the plan to the environment
-    - name: Terraform Apply
+    - name: Apply Terraform plan
       run: |
         terraform apply -auto-approve
         terraform output > terraform.env
         cat terraform.env
+        URL_ENDPOINT=$(terraform output -raw url)
+
+    - name: Save endpoint
+      id: persist_url
+      uses: noobly314/share-data@v1
+      with:
+        share-id: release_url
+        mode: set
+        key: url
+        value: ${ URL_ENDPOINT }
+
+  verify_environment:
+    name: 'Verify EC2 instance'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Restore endpoint
+      id: restore_url
+      uses: noobly314/share-data@v1
+      with:
+        share-id: release_url
+        mode: get
+        key: url
+
+    - name: Apply Terraform plan
+      run: |
+        echo Retrieved $url
+        curl ${url}
+    
+  destroy_environment:
+    name: 'Destrory EC2 instance'
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+    # Initialize a new Terraform and destroy the environment
+    - name: Initialize and Plan
+      run: |
+        # terraform init
+        terraform destroy
+
+
+
+
 
 
 
