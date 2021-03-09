@@ -41,30 +41,35 @@ jobs:
         # terraform fmt -check
         terraform plan
 
-    # Abort if the plan failed
-    - name: Abort on Terrafor failures
-      if: steps.plan.outcome == 'failure'
-      run: exit 1
+    # # Abort if the plan failed
+    # - name: Abort on Terrafor failures
+    #   if: steps.plan.outcome == 'failure'
+    #   run: exit 1
       
     # Apply the plan to the environment
     - name: Apply Terraform plan
       run: |
         terraform apply -auto-approve
-        URL=`terraform output -raw url`
-        echo "--> $URL <--"
-        echo "Retrieved endpoint: $URL"
+        # URL=`terraform output -raw url`
+        # echo "--> $URL <--"
+        # echo "Retrieved endpoint: $URL"
+        terraform output > ${{ github.workspace }}/terraform.output
+        cat ${{ github.workspace }}/terraform.output
     
-    - name: Debug
-      run: 'echo "Retrieved endpoint: $URL"'
+    # - name: Save endpoint
+    #   id: persist_url
+    #   uses: noobly314/share-data@v1
+    #   with:
+    #     share-id: release_url
+    #     mode: set
+    #     key: url
+    #     value: "ec2-54-190-155-39.us-west-2.compute.amazonaws.com:80"
   
-    - name: Save endpoint
-      id: persist_url
-      uses: noobly314/share-data@v1
+    - name: Persist Terraform output
+      uses: actions/upload-artifact@v2
       with:
-        share-id: release_url
-        mode: set
-        key: url
-        value: "ec2-54-190-155-39.us-west-2.compute.amazonaws.com:80"
+        name: terraform-output
+        path: ${{ github.workspace }}/terraform.output
 
   verify_environment:
     name: 'Verify EC2 instance'
@@ -72,18 +77,23 @@ jobs:
     needs: provision_environment
     
     steps:
-    - name: Restore endpoint
-      id: restore_url
-      uses: noobly314/share-data@v1
+    # - name: Restore endpoint
+    #   id: restore_url
+    #   uses: noobly314/share-data@v1
+    #   with:
+    #     share-id: release_url
+    #     mode: get
+    #     key: url
+
+    - name: Restore Terraform output
+      uses: actions/download-artifact@v2
       with:
-        share-id: release_url
-        mode: get
-        key: url
+        name: terraform-output
 
     - name: Echo endpoint
       run: |
         echo Retrieved...
-        echo $url
+        cat ${{ github.workspace }}/terraform.output
     
     - name: Verify endpoint
       run: |
