@@ -1,0 +1,28 @@
+{
+  "name": "ProjectSummary",
+  "version": "1.0.0",
+  "description": "Action used to summarize contents of a project",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dmckinstry/ProjectSummary.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dmckinstry/ProjectSummary/issues"
+  },
+  "homepage": "https://github.com/dmckinstry/ProjectSummary#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^2.2.0",
+    "@octokit/graphql": "^4.4.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^7.1.2"
+  }
+}

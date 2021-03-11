@@ -10,7 +10,6 @@ on:
 defaults:
   run:
     shell: bash
-    working-directory: ./aws/ec2
 
 jobs:
   provision_environment:
@@ -36,6 +35,7 @@ jobs:
 
     # Initialize a new Terraform working directory, verify the format, and execute the plan
     - name: Initialize and Plan
+      working-directory: ./aws/ec2
       run: |
         terraform init
         # terraform fmt -check
@@ -48,47 +48,41 @@ jobs:
       
     # Apply the plan to the environment
     - name: Apply Terraform plan
+      working-directory: ./aws/ec2
       run: |
         terraform apply -auto-approve
         # URL=`terraform output -raw url`
         # echo "--> $URL <--"
         # echo "Retrieved endpoint: $URL"
-        terraform output > ${{ github.workspace }}/terraform.output
-        cat ${{ github.workspace }}/terraform.output
-    
-    # - name: Save endpoint
-    #   id: persist_url
-    #   uses: noobly314/share-data@v1
-    #   with:
-    #     share-id: release_url
-    #     mode: set
-    #     key: url
-    #     value: "ec2-54-190-155-39.us-west-2.compute.amazonaws.com:80"
-  
-    - name: Persist Terraform output
-      uses: actions/upload-artifact@v2
-      with:
-        name: terraform-output
-        path: ${{ github.workspace }}/terraform.output
+        # terraform output > ${{ github.workspace }}/terraform.output
+        # cat ${{ github.workspace }}/terraform.output
 
-  verify_environment:
-    name: 'Verify EC2 instance'
-    runs-on: ubuntu-latest
-    needs: provision_environment
-    
-    steps:
-    # - name: Restore endpoint
-    #   id: restore_url
-    #   uses: noobly314/share-data@v1
-    #   with:
-    #     share-id: release_url
-    #     mode: get
-    #     key: url
+    - name: Python test
+      shell: python      
+      run: | 
+        import os
+        os.system('cd ./aws/ec2; terraform output > terraform.output')
+        lines = os.popen('terraform.output', 'r').readlines()
+        for line in lines:
+          print('--> ' + line)
+          
 
-    - name: Restore Terraform output
-      uses: actions/download-artifact@v2
-      with:
-        name: terraform-output
+    # - name: Persist Terraform output
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: terraform-output
+    #     path: ${{ github.workspace }}/terraform.output
+
+  # verify_environment:
+  #   name: 'Verify EC2 instance'
+  #   runs-on: ubuntu-latest
+  #   needs: provision_environment
+    
+  #   steps:
+    # - name: Restore Terraform output
+    #   uses: actions/download-artifact@v2
+    #   with:
+    #     name: terraform-output
 
     - name: Echo endpoint
       run: |
@@ -99,17 +93,17 @@ jobs:
       run: |
         curl ${url}
     
-  destroy_environment:
-    name: 'Destrory EC2 instance'
-    runs-on: ubuntu-latest
-    needs: verify_environment
+  # destroy_environment:
+  #   name: 'Destrory EC2 instance'
+  #   runs-on: ubuntu-latest
+  #   needs: verify_environment
     
-    steps:
+  #   steps:
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+    # - name: Setup Terraform
+    #   uses: hashicorp/setup-terraform@v1
+    #   with:
+    #     cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
     # Initialize a new Terraform and destroy the environment
     - name: Destroy environment
