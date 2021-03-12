@@ -60,6 +60,11 @@ describe('Unit Tests', function() {
       expect(results).to.contain('url="some_url:8080"');
       expect(results).to.contain('sg="some-security-group"');
       expect(results.length).to.equal(45);
+    })
+  }),
+  describe('writeScriptFile()', function () {
+    it('Should succeed when properly configures', function() {
+      target.writeScriptFile( '/tmp/test.sh', 'test=123\necho $test\n', 'bash' );
     });
   });
 });

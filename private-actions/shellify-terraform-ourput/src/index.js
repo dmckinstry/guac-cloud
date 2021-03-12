@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const fs = require('fs');
 const util = require('util');
 const process = require('child_process');
+const { notDeepEqual } = require('assert');
 
 //#region supporting functions
 /*
@@ -104,6 +105,13 @@ function convertTerraformOutputToScript( inputFile ) {
 
   return resultsScript;
 }
+
+function writeScriptFile( filename, content, scriptType='bash' ) {
+  fs.writeFileSync( filename, content );
+  if ( scriptType === 'bash' ) {
+    fs.chmodSync( filename, '777' );
+  }
+}
 //#endregion
 
 /*
@@ -121,8 +129,7 @@ function main() {
     var outputFile = getOutputFile( outputFile=tf_outputFile, outputDir=tf_Directory );
 
     var script = convertTerraformOutputToScript( outputFile );
-
-
+    writeScriptFile( outFile, script );
 
   } catch( error ) {
     core.setFailed( error.message );
@@ -131,6 +138,7 @@ function main() {
 
 main();
 
+module.exports.writeScriptFile = writeScriptFile;
 module.exports.convertTerraformOutputToScript = convertTerraformOutputToScript;
 module.exports.verifyParameters = verifyParameters;
 module.exports.getOutputFile = getOutputFile;
