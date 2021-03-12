@@ -21,11 +21,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    # # Following used for ACT debugging
-    # - name: Install Buster prereqs
-    #   run: |
-    #     apt update
-    #     apt install unzip
+    # Following used for ACT debugging
+    - name: Install Buster prereqs
+      run: |
+        apt update
+        apt install unzip
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
@@ -54,24 +54,20 @@ jobs:
         # URL=`terraform output -raw url`
         # echo "--> $URL <--"
         # echo "Retrieved endpoint: $URL"
-        # terraform output > ${{ github.workspace }}/terraform.output
+        terraform output > ${{ github.workspace }}/terraform.output
         # cat ${{ github.workspace }}/terraform.output
 
-    - name: Python test
-      shell: python      
-      run: | 
-        import os
-        os.system('cd ./aws/ec2; terraform output > terraform.output')
-        lines = os.popen('terraform.output', 'r').readlines()
-        for line in lines:
-          print('--> ' + line)
-          
+    - name: Capture Terraform output
+      uses: ./private_actions/shellify-terraform-output
+      with:
+        terraform-output-file: ${{ github.workspace }}/terraform.output
+        shell-output-file: ${{ github.workspace }}/tf_output.sh
 
-    # - name: Persist Terraform output
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: terraform-output
-    #     path: ${{ github.workspace }}/terraform.output
+    - name: Persist Terraform output
+      uses: actions/upload-artifact@v2
+      with:
+        name: terraform-output
+        path: ${{ github.workspace }}/tf_output.sh
 
   # verify_environment:
   #   name: 'Verify EC2 instance'
