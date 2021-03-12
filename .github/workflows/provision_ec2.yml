@@ -64,7 +64,7 @@ jobs:
         ls  ${{ github.workspace }}/private-actions/shellify-terraform-output
 
     - name: Capture Terraform output
-      uses:  ${{ github.workspace }}/private-actions/shellify-terraform-output
+      uses:  ./private-actions/shellify-terraform-output
       with:
         terraform-output-file: ${{ github.workspace }}/terraform.output
         shell-output-file: ${{ github.workspace }}/tf_output.sh
