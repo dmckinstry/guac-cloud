@@ -83,7 +83,7 @@ jobs:
     - name: Echo endpoint
       run: |
         echo Retrieved...
-        cat ${{ github.workspace }}/terraform.output
+        cat ${{ github.workspace }}/tf_output.sh
     
     - name: Verify endpoint
       run: |
