@@ -21,11 +21,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    # Following used for ACT debugging
-    - name: Install Buster prereqs
-      run: |
-        apt update
-        apt install unzip
+#     # Following used for ACT debugging
+#     - name: Install Buster prereqs
+#       run: |
+#         apt update
+#         apt install unzip
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
