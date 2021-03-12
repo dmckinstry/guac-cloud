@@ -60,11 +60,11 @@ jobs:
         ls
         echo "--> ls ./private-actions"
         ls  ${{ github.workspace }}/private-actions
-        echo "--> ls ./private-actions/shellify-terraform-output"
-        ls  ${{ github.workspace }}/private-actions/shellify-terraform-output
+        echo "--> ls ./private-actions/shellify-terraform-ourput"
+        ls  ${{ github.workspace }}/private-actions/shellify-terraform-ourput
 
     - name: Capture Terraform output
-      uses:  ./private-actions/shellify-terraform-output
+      uses:  ./private-actions/shellify-terraform-ourput
       with:
         terraform-output-file: ${{ github.workspace }}/terraform.output
         shell-output-file: ${{ github.workspace }}/tf_output.sh
