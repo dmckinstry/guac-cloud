@@ -56,6 +56,12 @@ jobs:
         # echo "Retrieved endpoint: $URL"
         terraform output > ${{ github.workspace }}/terraform.output
         # cat ${{ github.workspace }}/terraform.output
+        echo "--> ls ."
+        ls
+        echo "--> ls ./private-actions"
+        ls ./private-actions
+        echo "--> ls ./private-actions/shellify-terraform-output"
+        ls ./private-actions/shellify-terraform-output
 
     - name: Capture Terraform output
       uses: ./private-actions/shellify-terraform-output
