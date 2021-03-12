@@ -1,3 +1,4 @@
+/*jshint -W030 */
 const target = require("../index");
 const assert = require('assert');
 const chai = require('chai');
@@ -38,7 +39,7 @@ describe('Unit Tests', function() {
     it('Should error on an invalid shell', function() {
       var results = target.verifyParameters( tf_outputFile=null, tf_Directory=TF_TEST_DIR, outputScriptFile='/tmp/test.sh', scriptFileType='windows');
       expect(results).is.below(0);
-    })
+    });
   }),
   describe('getOutputFile()', function() {
     it('Should error on missing paramaters', function() {
@@ -48,7 +49,7 @@ describe('Unit Tests', function() {
     it('Should succeed when the specified file exists', function() {
       var results = target.getOutputFile( outputFile=TF_TEST_FILE, outputDir=null );
       expect(results).equals(TF_TEST_FILE);
-    })
+    });
     /*
     ** We are not doing the integration test with a valid output dir as it requires terraform
     */
@@ -58,7 +59,7 @@ describe('Unit Tests', function() {
       var results = target.convertTerraformOutputToScript( inputFile=TF_TEST_FILE );
       expect(results).to.contain('url="some_url:8080"');
       expect(results).to.contain('sg="some-security-group"');
-      expect(results.length()).to.equal(0);
-    })
-  })
-})
+      expect(results.length).to.equal(45);
+    });
+  });
+});

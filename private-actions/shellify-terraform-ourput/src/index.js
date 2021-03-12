@@ -1,6 +1,5 @@
-const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG, R_OK } = require('constants');
 const core = require('@actions/core');
-const fsPromises = require('fs').promises;
+const fs = require('fs');
 const util = require('util');
 const process = require('child_process');
 
@@ -21,8 +20,8 @@ function verifyParameters( tf_outputFile, tf_Directory, outputScriptFile, script
   //  Verify that if specified, tf_Directory is a valid path
   if (tf_Directory != null) {
     try {
-      var stats = fs.statSync(tf_Directory);
-      if (!stats.isDirectory()) {
+      var dirStats = fs.statSync(tf_Directory);
+      if (!dirStats.isDirectory()) {
         core.setFailed('The terraform-directory parameter does not point to a valid directory path');
         return -3;
       }
@@ -36,9 +35,8 @@ function verifyParameters( tf_outputFile, tf_Directory, outputScriptFile, script
   //  Verify that if specified, tf_outputFile is an existing file path
   else {
     try {
-      
-      var stats = fs.statSync(tf_outputFile);
-      if (!stats.isFile()) {
+      var fileStats = fs.statSync(tf_outputFile);
+      if (!fileStats.isFile()) {
         core.setFailed('The terraform-output-file parameter does not point to a valid file path');
         return -4;
       }
@@ -91,10 +89,20 @@ function getOutputFile(outputFile, outputDir) {
 /*
 **
 */
-async function convertTerraformOutputToScript( inputFile ) {
-  fsPromises.readFile(inputFile, R_OK)
-    .then((data) => { return data })
-    .catch((err) => console.error(err));
+function convertTerraformOutputToScript( inputFile ) {
+  // We can use sync file access since this is a single isolated process running in a container
+  const buffer = fs.readFileSync( inputFile );
+  const fileContents = buffer.toString();
+  const lines = fileContents.split(/\r?\n/);
+  var resultsScript = "";
+
+  lines.forEach(line => {
+    if ( line.includes( ' = "' ) && line[0].match(/^[a-z]+$/i)) {
+      resultsScript += line.replace( ' = "', '="' ) + '\n';
+    }
+  });
+
+  return resultsScript;
 }
 //#endregion
 
@@ -113,11 +121,16 @@ function main() {
     var outputFile = getOutputFile( outputFile=tf_outputFile, outputDir=tf_Directory );
 
     var script = convertTerraformOutputToScript( outputFile );
+
+
+
   } catch( error ) {
     core.setFailed( error.message );
   }
 }
 
-module.exports.convertTerraformOutputToScript = convertTerraformOutputToScript
-module.exports.verifyParameters = verifyParameters
-module.exports.getOutputFile = getOutputFile
+main();
+
+module.exports.convertTerraformOutputToScript = convertTerraformOutputToScript;
+module.exports.verifyParameters = verifyParameters;
+module.exports.getOutputFile = getOutputFile;

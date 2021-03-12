@@ -23,6 +23,8 @@
     "@octokit/graphql": "^4.4.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "jshint": "^2.12.0",
+    "jslint": "^0.12.1",
     "mocha": "^7.1.2"
   }
 }
