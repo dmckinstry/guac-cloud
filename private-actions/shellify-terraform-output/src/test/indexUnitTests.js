@@ -13,11 +13,11 @@ describe('Unit Tests', function() {
   */
   describe('verifyParameters()', function() {
     it('Should succeed with proper output file specified', function() {
-      var results = target.verifyParameters( tf_outputFile=TF_TEST_FILE, tf_Directory=null, outputScriptFile='/tmp/test.sh', scriptFileType='bash');
+      var results = target.verifyParameters( tf_outputFile=TF_TEST_FILE, tf_Directory="", outputScriptFile='/tmp/test.sh', scriptFileType='bash');
       expect(results).equals(0);
     }),
     it('Should succeed with proper output directory specified', function() {
-      var results = target.verifyParameters( tf_outputFile=null, tf_Directory=TF_TEST_DIR, outputScriptFile='/tmp/test.sh', scriptFileType='BASH');
+      var results = target.verifyParameters( tf_outputFile="", tf_Directory=TF_TEST_DIR, outputScriptFile='/tmp/test.sh', scriptFileType='BASH');
       expect(results).equals(0);
     }),
     it('Should error on missing output parameters', function() {
