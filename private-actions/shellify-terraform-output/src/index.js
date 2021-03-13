@@ -10,16 +10,16 @@ const { notDeepEqual } = require('assert');
 */
 function verifyParameters( tf_outputFile, tf_Directory, outputScriptFile, scriptFileType ) {
   // Verify exclusive terraform output parameters
-  if (tf_Directory == null && tf_outputFile == null) {
+  if (!tf_Directory && !tf_outputFile) {
     core.setFailed('Either the terraform-output-file or terraform-directory parameters must be specified');
     return -1;
-  } else if (tf_Directory != null && tf_outputFile != null) {
-    core.setFailed('The terraform-output-file and terraform-directory parameters asre mutually exclusive; please specify only one');
+  } else if (tf_Directory != "" && tf_outputFile != "") {
+    core.setFailed('The terraform-output-file(' + tf_outputFile + ') and terraform-directory (' + tf_Directory + ') parameters are mutually exclusive; please specify only one');
     return -2;
   }
 
   //  Verify that if specified, tf_Directory is a valid path
-  if (tf_Directory != null) {
+  if (tf_Directory != "") {
     try {
       var dirStats = fs.statSync(tf_Directory);
       if (!dirStats.isDirectory()) {
@@ -129,7 +129,7 @@ function main() {
     var outputFile = getOutputFile( outputFile=tf_outputFile, outputDir=tf_Directory );
 
     var script = convertTerraformOutputToScript( outputFile );
-    writeScriptFile( outFile, script );
+    writeScriptFile( outputFile, script );
 
   } catch( error ) {
     core.setFailed( error.message );

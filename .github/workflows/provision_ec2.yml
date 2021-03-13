@@ -21,11 +21,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-#     # Following used for ACT debugging
-#     - name: Install Buster prereqs
-#       run: |
-#         apt update
-#         apt install unzip
+    # # Following used for ACT debugging
+    # - name: Install Buster prereqs
+    #   run: |
+    #     apt update
+    #     apt install unzip
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
@@ -51,20 +51,11 @@ jobs:
       working-directory: ./aws/ec2
       run: |
         terraform apply -auto-approve
-        # URL=`terraform output -raw url`
-        # echo "--> $URL <--"
-        # echo "Retrieved endpoint: $URL"
         terraform output > ${{ github.workspace }}/terraform.output
         # cat ${{ github.workspace }}/terraform.output
-        echo "--> ls ."
-        ls
-        echo "--> ls ./private-actions"
-        ls  ${{ github.workspace }}/private-actions
-        echo "--> ls ./private-actions/shellify-terraform-ourput"
-        ls  ${{ github.workspace }}/private-actions/shellify-terraform-ourput
 
     - name: Capture Terraform output
-      uses:  ./private-actions/shellify-terraform-ourput
+      uses:  ./private-actions/shellify-terraform-output
       with:
         terraform-output-file: ${{ github.workspace }}/terraform.output
         shell-output-file: ${{ github.workspace }}/tf_output.sh
