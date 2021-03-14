@@ -107,6 +107,11 @@ function convertTerraformOutputToScript( inputFile ) {
 }
 
 function writeScriptFile( filename, content, scriptType='bash' ) {
+  // console.log('==== writing file====');
+  // console.log('-> filename: ' + filename );
+  // console.log('-> content:\n' + content );
+  // console.log('-> script:   ' + scriptType );
+  // console.log('======================');
   fs.writeFileSync( filename, content );
   if ( scriptType === 'bash' ) {
     fs.chmodSync( filename, '777' );
@@ -129,7 +134,7 @@ function main() {
     var outputFile = getOutputFile( outputFile=tf_outputFile, outputDir=tf_Directory );
 
     var script = convertTerraformOutputToScript( outputFile );
-    writeScriptFile( outputFile, script );
+    writeScriptFile( outputScriptFile, script );
 
   } catch( error ) {
     core.setFailed( error.message );
