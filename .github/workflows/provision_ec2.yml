@@ -72,20 +72,20 @@ jobs:
   #   needs: provision_environment
     
   #   steps:
-    # - name: Restore Terraform output
-    #   uses: actions/download-artifact@v2
-    #   with:
-    #     name: terraform-output
+    - name: Restore Terraform output
+      uses: actions/download-artifact@v2
+      with:
+        name: terraform-output
 
-    - name: Echo endpoint
-      run: |
-        echo Retrieved...
-        cat ${{ github.workspace }}/tf_output.sh
     
     - name: Verify endpoint
       run: |
+        echo 'Retrieved Terraform output: '
+        cat ${{ github.workspace }}/tf_output.sh
+        . ${{ github.workspace }}/tf_output.sh
+        echo 'Pinging endpoint... '
         curl ${url}
-    
+
   # destroy_environment:
   #   name: 'Destrory EC2 instance'
   #   runs-on: ubuntu-latest
