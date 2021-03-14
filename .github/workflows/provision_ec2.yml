@@ -15,6 +15,8 @@ jobs:
   provision_environment:
     name: 'Provision EC2 instance'
     runs-on: ubuntu-latest
+    outputs:
+      ec2_url: ${{ steps.terraform_outputs.ec2_url }}
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -60,30 +62,39 @@ jobs:
         terraform-output-file: ${{ github.workspace }}/terraform.output
         shell-output-file: ${{ github.workspace }}/tf_output.sh
 
-    - name: Persist Terraform output
-      uses: actions/upload-artifact@v2
-      with:
-        name: terraform-output
-        path: ${{ github.workspace }}/tf_output.sh
-
+#     - name: Persist Terraform output
+#       uses: actions/upload-artifact@v2
+#       with:
+#         name: terraform-output
+#         path: ${{ github.workspace }}/tf_output.sh
+    
+    - name: Save Terraform outputs
+      id: terraform_outputs
+      run: |
+        . ${{ github.workspace }}/tf_output.sh
+        echo "::set-output name=ec2_url::$url"
+      
   verify_environment:
     name: 'Verify EC2 instance'
     runs-on: ubuntu-latest
     needs: provision_environment
     
     steps:
-    - name: Restore Terraform output
-      uses: actions/download-artifact@v2
-      with:
-        name: terraform-output
+#     - name: Restore Terraform output
+#       uses: actions/download-artifact@v2
+#       with:
+#         name: terraform-output
     
     - name: Verify endpoint
+    
       run: |
         echo 'Retrieved Terraform output: '
-        cat ${{ github.workspace }}/tf_output.sh
-        . ${{ github.workspace }}/tf_output.sh
+        # cat ${{ github.workspace }}/tf_output.sh
+        # . ${{ github.workspace }}/tf_output.sh
+        echo ${{needs.provision-environment.outputs.output1}}
         echo 'Pinging endpoint... '
-        curl ${url}
+        # curl ${url}
+        curl ${{needs.provision-environment.outputs.output1}}
 
   destroy_environment:
     name: 'Destrory EC2 instance'
