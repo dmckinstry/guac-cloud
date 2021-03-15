@@ -78,11 +78,12 @@ jobs:
       url: 'http://${{needs.provision_environment.outputs.ec2_url}}'
 
     steps:
+    # Allow up to 3-minutes for the instance to spin up and reply
     - name: Verify endpoint    
       run: |
         echo 'Retrieved Terraform output: '
         echo 'Pinging endpoint: ${{needs.provision_environment.outputs.ec2_url}}'
-        curl ${{needs.provision_environment.outputs.ec2_url}}
+        curl --retry 11 --retry-delay 15 ${{needs.provision_environment.outputs.ec2_url}}
 
   destroy_environment:
     name: 'Destroy EC2 instance'
