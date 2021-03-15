@@ -92,9 +92,9 @@ jobs:
         echo 'Retrieved Terraform output: '
         # cat ${{ github.workspace }}/tf_output.sh
         # . ${{ github.workspace }}/tf_output.sh
-        echo 'Pinging endpoint... ${{needs.provision-environment.outputs.ec2_url}}'
+        echo 'Pinging endpoint... ${{needs.provision_environment.outputs.ec2_url}}'
         # curl ${url}
-        curl ${{needs.provision-environment.outputs.ec2_url}}
+        curl ${{needs.provision_environment.outputs.ec2_url}}
 
   destroy_environment:
     name: 'Destrory EC2 instance'
