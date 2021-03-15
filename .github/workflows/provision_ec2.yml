@@ -23,11 +23,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    # # Following used for ACT debugging
-    # - name: Install Buster prereqs
-    #   run: |
-    #     apt update
-    #     apt install unzip
+    # Following used for ACT debugging
+    - name: Install Buster prereqs when debugging from CLI (set act environment variable)
+      if: env.act
+      run: |
+        apt update
+        apt install unzip
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
@@ -62,12 +63,6 @@ jobs:
         terraform-output-file: ${{ github.workspace }}/terraform.output
         shell-output-file: ${{ github.workspace }}/tf_output.sh
 
-#     - name: Persist Terraform output
-#       uses: actions/upload-artifact@v2
-#       with:
-#         name: terraform-output
-#         path: ${{ github.workspace }}/tf_output.sh
-    
     - name: Save Terraform outputs
       id: save_terraform
       run: |
@@ -79,21 +74,15 @@ jobs:
     name: 'Verify EC2 instance'
     runs-on: ubuntu-latest
     needs: provision_environment
-    
+    environment: 
+      name: cloud-staging
+      url: 'http://${{needs.provision_environment.outputs.ec2_url}}'
+
     steps:
-#     - name: Restore Terraform output
-#       uses: actions/download-artifact@v2
-#       with:
-#         name: terraform-output
-    
-    - name: Verify endpoint
-    
+    - name: Verify endpoint    
       run: |
         echo 'Retrieved Terraform output: '
-        # cat ${{ github.workspace }}/tf_output.sh
-        # . ${{ github.workspace }}/tf_output.sh
-        echo 'Pinging endpoint... ${{needs.provision_environment.outputs.ec2_url}}'
-        # curl ${url}
+        echo 'Pinging endpoint: ${{needs.provision_environment.outputs.ec2_url}}'
         curl ${{needs.provision_environment.outputs.ec2_url}}
 
   destroy_environment:
@@ -113,9 +102,6 @@ jobs:
       run: |
         # terraform init
         terraform destroy -auto-approve
-
-
-
 
 
 
