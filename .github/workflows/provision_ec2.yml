@@ -105,7 +105,7 @@ jobs:
     - name: Destroy environment
       working-directory: ./aws/ec2
       run: |
-        # terraform init
+        terraform init
         # terraform plan
         terraform destroy -auto-approve
 
