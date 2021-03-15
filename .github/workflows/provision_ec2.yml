@@ -1,4 +1,4 @@
-name: 'Terraform'
+name: 'Verify EC2 IaC'
 
 on:
   push:
