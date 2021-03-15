@@ -72,6 +72,7 @@ jobs:
       id: terraform_outputs
       run: |
         . ${{ github.workspace }}/tf_output.sh
+        echo "Retrieved output $url"
         echo "::set-output name=ec2_url::$url"
       
   verify_environment:
