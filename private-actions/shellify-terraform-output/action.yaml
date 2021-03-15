@@ -1,0 +1,20 @@
+name: 'shellify-terraform-output'
+description: 'Converts Terraform output into a script to set environment variables'
+inputs:
+  terraform-output-file: 
+    description: Path to file captured from "terraform output"; either terraform-output or terraform-directory are required
+    required: false
+  terraform-directory:
+    description: Path to the folder where a "terraform apply" was run; either terraform-output or terraform-directory are required
+    required: false
+  shell-output-file:
+    description: Path to a file where the resulting file will be written.
+    required: true
+  script-type:
+    description: Specifies which script file type to generate. Defaults to 'bash' which is currently the only supported format.
+    required: true
+    default: bash
+    
+runs:
+  using: 'node12'
+  main: 'src/index.js'

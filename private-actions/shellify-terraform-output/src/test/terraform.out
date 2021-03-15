@@ -1,0 +1,9 @@
+url = "some_url:8080"
+sg = "some-security-group"
+::debug::Terraform exited with code 0.
+::debug::stdout: url = "ec2-54-190-155-39.us-west-2.compute.amazonaws.com:80"%0A
+::debug::stderr:
+::debug::exitcode: 0
+::set-output name=stdout::url = "ec2-54-190-155-39.us-west-2.compute.amazonaws.com:80"%0A
+::set-output name=stderr::
+::set-output name=exitcode::0
