@@ -104,7 +104,8 @@ jobs:
     # Initialize a new Terraform and destroy the environment
     - name: Destroy environment
       run: |
-        # terraform init
+        terraform init
+        terraform plan
         terraform destroy -auto-approve
 
 
