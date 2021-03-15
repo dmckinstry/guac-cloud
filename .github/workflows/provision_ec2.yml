@@ -16,7 +16,7 @@ jobs:
     name: 'Provision EC2 instance'
     runs-on: ubuntu-latest
     outputs:
-      ec2_url: ${{ steps.terraform_outputs.ec2_url }}
+      ec2_url: ${{ steps.save_terraform.outputs.ec2_url }}
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -56,7 +56,7 @@ jobs:
         terraform output > ${{ github.workspace }}/terraform.output
         # cat ${{ github.workspace }}/terraform.output
 
-    - name: Capture Terraform output
+    - name: Determine Terraform output
       uses:  ./private-actions/shellify-terraform-output
       with:
         terraform-output-file: ${{ github.workspace }}/terraform.output
@@ -69,7 +69,7 @@ jobs:
 #         path: ${{ github.workspace }}/tf_output.sh
     
     - name: Save Terraform outputs
-      id: terraform_outputs
+      id: save_terraform
       run: |
         . ${{ github.workspace }}/tf_output.sh
         echo "Retrieved output $url"
